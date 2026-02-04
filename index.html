@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Be My Valentine?</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom right, #ff9a9e, #fad0c4);
+            overflow: hidden; /* Megakadályozza a görgetést */
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            user-select: none; /* Szövegkijelölés tiltása a jobb élményért */
+        }
+
+        /* A lebegő szívecskék a háttérben */
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Fő tartalmi doboz */
+        .container {
+            position: relative;
+            z-index: 100; /* Mindig a szívek felett */
+            width: 90%;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: #b30047;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Gombok stílusa */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            min-height: 60px; /* Hely fenntartása a gomboknak */
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+            button:active {
+                transform: scale(0.95);
+            }
+
+        #yesBtn {
+            background-color: #ff4d79;
+            color: white;
+        }
+
+            #yesBtn:hover {
+                background-color: #e6004c;
+                transform: scale(1.05);
+            }
+
+        #noBtn {
+            background-color: #fff;
+            color: #b30047;
+            border: 2px solid #b30047;
+        }
+
+        /* Második képernyő (Success) */
+        #step2 {
+            display: none; /* Alapból rejtett */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .success-text {
+            font-size: 2rem;
+            color: #b30047;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: popIn 0.5s ease-out;
+        }
+
+        /* Gifek elrendezése */
+        .gif-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+            .gif-container img {
+                border-radius: 15px;
+                /*box-shadow: 0 5px 15px rgba(0,0,0,0.2);*/
+                object-fit: cover;
+                animation: fadeIn 1s ease-in;
+            }
+
+        /* Reszponzív méretezés a képeknek */
+        /* Desktop */
+        @media (min-width: 769px) {
+            .gif-container img {
+                max-width: 30%;
+                height: auto;
+                max-height: 300px;
+            }
+        }
+
+        /* Mobil */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .gif-container img {
+                /* Mobilon korlátozzuk a magasságot, hogy ne kelljen görgetni */
+                max-height: 20vh;
+                max-width: 90%;
+            }
+        }
+
+        /* Animációk */
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(-45deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            80% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.6);
+            transform: rotate(-45deg);
+        }
+
+            .heart::before, .heart::after {
+                content: "";
+                width: 20px;
+                height: 20px;
+                background-color: rgba(255, 255, 255, 0.6);
+                border-radius: 50%;
+                position: absolute;
+            }
+
+            .heart::before {
+                top: -10px;
+                left: 0;
+            }
+
+            .heart::after {
+                left: 10px;
+                top: 0;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <div class="container">
+        <div id="step1">
+            <h1>Will you be my Valentine?</h1>
+            <div class="btn-group">
+                <button id="yesBtn">Yes</button>
+                <button id="noBtn">No</button>
+            </div>
+        </div>
+
+        <div id="step2">
+            <div class="success-text">I knew you would say yes c:</div>
+            <div class="gif-container">
+                <img src="gif2.gif" alt="Cute gif 2" />
+                <img src="gif1.gif" alt="Cute gif 1" />
+                <img src="gif3.gif" alt="Cute gif 3" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+
+        const PADDING = 20;
+
+        function moveButton() {
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+
+            const maxX = window.innerWidth - btnWidth - PADDING;
+            const maxY = window.innerHeight - btnHeight - PADDING;
+
+            const newX = Math.max(PADDING, Math.random() * maxX);
+            const newY = Math.max(PADDING, Math.random() * maxY);
+
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = `${newX}px`;
+            noBtn.style.top = `${newY}px`;
+
+            noBtn.style.zIndex = "1000";
+        }
+
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+        noBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+
+        yesBtn.addEventListener('click', () => {
+            step1.style.display = 'none';
+            step2.style.display = 'flex';
+
+            createHearts(30);
+        });
+
+        function createHearts(count = 15) {
+            const container = document.getElementById('heartsContainer');
+
+            for (let i = 0; i < count; i++) {
+                let heart = document.createElement('div');
+                heart.className = 'heart';
+
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * 100 + 'vh';
+
+                let size = Math.random() * 10 + 10;
+                heart.style.width = size + 'px';
+                heart.style.height = size + 'px';
+                heart.style.animation = `float ${Math.random() * 5 + 5}s linear infinite`;
+                heart.style.opacity = Math.random();
+
+                container.appendChild(heart);
+            }
+        }
+
+        createHearts(20);
+    </script>
+
+</body>
+</html>
